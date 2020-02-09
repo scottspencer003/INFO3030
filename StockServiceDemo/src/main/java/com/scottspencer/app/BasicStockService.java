@@ -1,9 +1,12 @@
 package com.scottspencer.app;
 
-public class BasicStockService {
+public class BasicStockService implements StockService {
 	
-	public BasicStockService() {}
+	public BasicStockService() {
+	}
 	
-	public StockQuote getQuote(String tickerSymbol) {}
+	public StockQuote getQuote(String tickerSymbol) {
+		return new StockQuote(780.08, "TSLA");
+	}
 
 }

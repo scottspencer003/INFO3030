@@ -2,8 +2,8 @@ package com.scottspencer.app;
 
 public class StockQuote {
 	
-	private double value = 0.0;
-	private String tickerSymbol = "TSLA";
+	private double value;
+	private String tickerSymbol;
 	
 	public StockQuote() {}
 	
@@ -13,7 +13,7 @@ public class StockQuote {
 	}
 	
 	public StockQuote(StockQuote p_stockQuote) {
-		
+		//method to copy the stockquote 
 	}
 	
 	public String getTickerSymbol() { return tickerSymbol; }
