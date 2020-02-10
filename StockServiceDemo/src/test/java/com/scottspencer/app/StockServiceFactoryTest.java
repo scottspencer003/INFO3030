@@ -8,9 +8,8 @@ public class StockServiceFactoryTest {
 
 	@Test
 	public void stockServiceFactoryTest() {
-		double var = 780.08;
 		StockQuote compareQuote = new StockQuote();
-		assertEquals(compareQuote.getValue(), var);
+		assertTrue(compareQuote.getValue() == 780.08);
 	}
 
 }
