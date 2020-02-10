@@ -5,7 +5,10 @@ public class StockQuote {
 	private double value;
 	private String tickerSymbol;
 	
-	public StockQuote() {}
+	public StockQuote() {
+//		this.value = 780.08;
+//		this.tickerSymbol = "TSLA";
+	}
 	
 	public StockQuote(double p_value, String p_tickerSymbol) {
 		this.value = p_value;
