@@ -25,11 +25,8 @@ public class StockServiceFactoryTest {
 	@Test
 	public void InstanceOfTest () {
 		StockService testStock = StockServiceFactory.getStockService();
-		BasicStockService comparisonStock = new BasicStockService();
-		assertEquals(comparisonStock, testStock);
+		assertTrue(testStock instanceof BasicStockService);
 	}
 
 }
 
-
-//StockServiceFactory.getStockService()
