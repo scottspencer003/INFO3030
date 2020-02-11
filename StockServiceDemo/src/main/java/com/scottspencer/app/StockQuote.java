@@ -16,7 +16,8 @@ public class StockQuote {
 	}
 	
 	public StockQuote(StockQuote p_stockQuote) {
-		//method to copy the stockquote 
+		this.value = p_stockQuote.value;
+		this.tickerSymbol = p_stockQuote.tickerSymbol;
 	}
 	
 	public String getTickerSymbol() { return tickerSymbol; }
