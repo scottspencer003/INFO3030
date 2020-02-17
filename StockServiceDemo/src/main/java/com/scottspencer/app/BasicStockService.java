@@ -16,10 +16,10 @@ public class BasicStockService implements StockService {
 
 
 	public List<StockQuote> getQuote(String symbol, Calendar from, Calendar until) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
+	@SuppressWarnings("unused")
 	private List<StockQuote> createObjects() {
 		List<StockQuote> stockHistory = new ArrayList<>();
 		int year = 2020;
