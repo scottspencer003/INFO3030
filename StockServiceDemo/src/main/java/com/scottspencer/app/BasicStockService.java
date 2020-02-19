@@ -16,10 +16,9 @@ public class BasicStockService implements StockService {
 
 
 	public List<StockQuote> getQuote(String symbol, Calendar from, Calendar until) {
-		return null;
+		return createObjects();
 	}
 	
-	@SuppressWarnings("unused")
 	private List<StockQuote> createObjects() {
 		List<StockQuote> stockHistory = new ArrayList<>();
 		int year = 2020;
@@ -36,8 +35,6 @@ public class BasicStockService implements StockService {
 		}
 		return stockHistory;
 	}
-	
-	
 
 }
 
