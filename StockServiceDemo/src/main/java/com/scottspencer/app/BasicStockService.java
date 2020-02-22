@@ -16,6 +16,7 @@ public class BasicStockService implements StockService {
 
 
 	public List<StockQuote> getQuote(String symbol, Calendar from, Calendar until) {
+
 		return createObjects();
 	}
 	
