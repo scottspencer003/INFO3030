@@ -5,6 +5,12 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
+enum IntervalEnum {
+	MINUTE, HOUR, DAY, MONTH;
+}
+
 public class BasicStockService implements StockService {
 	
 	public BasicStockService() {
@@ -15,7 +21,7 @@ public class BasicStockService implements StockService {
 	}
 
 
-	public List<StockQuote> getQuote(String symbol, Calendar from, Calendar until) {
+	public List<StockQuote> getQuote(@NotNull String symbol, Calendar from, Calendar until, IntervalEnum interval) {
 
 		return createObjects();
 	}

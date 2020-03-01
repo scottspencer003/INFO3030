@@ -7,6 +7,6 @@ public interface StockService {
 	
 	StockQuote getQuote(String symbol);
 	
-	List<StockQuote> getQuote(String symbol, Calendar from, Calendar until);
+	List<StockQuote> getQuote(String symbol, Calendar from, Calendar until, IntervalEnum interval);
 		
 }
