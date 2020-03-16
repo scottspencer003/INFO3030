@@ -3,7 +3,9 @@ package com.scottspencer.app;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class StockQuote {
+import org.apache.http.annotation.Immutable;
+
+@Immutable public class StockQuote {
 	
 	private double value;
 	private String tickerSymbol;

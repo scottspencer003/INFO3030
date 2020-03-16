@@ -7,11 +7,13 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.http.annotation.Immutable;
+
 enum IntervalEnum {
 	MINUTE, HOUR, DAY, MONTH;
 }
 
-public class BasicStockService implements StockService {
+@Immutable public class BasicStockService implements StockService {
 	
 	public BasicStockService() {
 	}
