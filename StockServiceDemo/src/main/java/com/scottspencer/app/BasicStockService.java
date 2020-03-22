@@ -30,6 +30,7 @@ enum IntervalEnum {
 	
 	private List<StockQuote> createObjects() {
 		List<StockQuote> stockHistory = new ArrayList<>();
+		
 		int year = 2020;
 		int month = 0;
 		int day = 1;

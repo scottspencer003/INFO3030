@@ -9,7 +9,7 @@ import org.apache.http.annotation.Immutable;
 	
 	StockQuote getQuote(String symbol) throws StockServiceException;
 	
-	List<StockQuote> getQuote(String symbol, Calendar from, Calendar until, IntervalEnum interval);
+	List<StockQuote> getQuote(String symbol, Calendar from, Calendar until, IntervalEnum interval) throws StockServiceException;
 
 		
 }

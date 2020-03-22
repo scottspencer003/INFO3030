@@ -42,7 +42,6 @@ public class DatabaseStockService implements StockService {
                 Date time = resultSet.getDate("time");
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(time);
-                // oops!
                 double price = resultSet.getDouble("price");
                 stockQuotes.add(new StockQuote(price, symbolValue, calendar));
             }
@@ -64,24 +63,28 @@ public class DatabaseStockService implements StockService {
      * @param end  the date of the last stock quote
      * @param interval cadence
      * @return a list of StockQuote instances
-     * @throws   StockServiceException if using the service generates an exception.
+     * @throws StockServiceException 
      */
     @Override
-    public List<StockQuote> getQuote(String symbol, Calendar from, Calendar until, IntervalEnum interval) {
+    public List<StockQuote> getQuote(String symbol, Calendar from, Calendar until, IntervalEnum interval) throws StockServiceException {
     	List <StockQuote> stockQuotes = new ArrayList<>();
     	try {
     		Connection connection = DatabaseUtils.getConnection();
             Statement statement = connection.createStatement();
-            String queryString = "select * from quotes where symbol = '" + symbol + "'";
+            Date startDate = new Date(from.getTimeInMillis()); 
+            Date endDate = new Date(until.getTimeInMillis());
+            
+            String queryString = "SELECT * FROM quotes WHERE symbol = '" + symbol + "' AND time BETWEEN CAST('" + startDate + "' AS DATE) AND CAST('" + endDate + "' AS DATE)";
             
             ResultSet resultSet = statement.executeQuery(queryString);
             stockQuotes = new ArrayList<>(resultSet.getFetchSize());
             while(resultSet.next()) {
+    
                 String symbolValue = resultSet.getString("symbol");
                 Date time = resultSet.getDate("time");
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(time);
-                // oops!
+              //Add a check for interval here
                 double price = resultSet.getDouble("price");
                 stockQuotes.add(new StockQuote(price, symbolValue, calendar));
             }
@@ -95,6 +98,6 @@ public class DatabaseStockService implements StockService {
         }
     	
     	
-        return stockQuotes.get(0);
+        return stockQuotes;
     }
 }
