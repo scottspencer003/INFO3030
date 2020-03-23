@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+enum IntervalEnum {
+	MINUTE, HOUR, DAY, MONTH;
+}
+
 /**
  * An implementation of the StockService interface that gets
  * stock data from a database.
@@ -73,23 +77,56 @@ public class DatabaseStockService implements StockService {
             Statement statement = connection.createStatement();
             Date startDate = new Date(from.getTimeInMillis()); 
             Date endDate = new Date(until.getTimeInMillis());
-            
             String queryString = "SELECT * FROM quotes WHERE symbol = '" + symbol + "' AND time BETWEEN CAST('" + startDate + "' AS DATE) AND CAST('" + endDate + "' AS DATE)";
-            
+
             ResultSet resultSet = statement.executeQuery(queryString);
             stockQuotes = new ArrayList<>(resultSet.getFetchSize());
+                       
+            Calendar checkCal = Calendar.getInstance();
+            
             while(resultSet.next()) {
     
                 String symbolValue = resultSet.getString("symbol");
                 Date time = resultSet.getDate("time");
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(time);
-              //Add a check for interval here
                 double price = resultSet.getDouble("price");
-                stockQuotes.add(new StockQuote(price, symbolValue, calendar));
+
+                switch(interval) {
+                case MINUTE:
+                	if(calendar.after(checkCal)) 
+	                	stockQuotes.add(new StockQuote(price, symbolValue, calendar));
+	                	checkCal.setTime(time);
+	                	checkCal.add(checkCal.MINUTE, 1);
+                	break;
+                	
+                case HOUR:	
+                	if(calendar.after(checkCal)) 
+	                	stockQuotes.add(new StockQuote(price, symbolValue, calendar));
+	                	checkCal.setTime(time);
+	                	checkCal.add(checkCal.HOUR, 1);
+                	break;
+                	
+                case DAY:  
+                	if(calendar.after(checkCal)) 
+	                	stockQuotes.add(new StockQuote(price, symbolValue, calendar));
+	                	checkCal.setTime(time);
+	                	checkCal.add(checkCal.DAY_OF_YEAR, 1);
+                	break;
+             
+                case MONTH:
+                	if(calendar.after(checkCal)) 
+	                	stockQuotes.add(new StockQuote(price, symbolValue, calendar));
+	                	checkCal.setTime(time);
+	                	checkCal.add(checkCal.MONTH, 1);
+                	break;
+                	
+                }
+
+                
+                
             }
-            
-            
+                  
     	} catch (DatabaseConnectionException | SQLException exception) {
             throw new StockServiceException(exception.getMessage(), exception);
         }

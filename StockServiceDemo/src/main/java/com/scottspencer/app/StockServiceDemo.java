@@ -44,12 +44,6 @@ public class StockServiceDemo
     		interval = IntervalEnum.MONTH;
     	}
     	
-//    	try {
-//			System.out.println("Current price: " + testStock.getQuote(stockSymbol).getValue());
-//		} catch (StockServiceException e) {
-//			e.printStackTrace();
-//		}
-    	
     	
     	if(!(stockSymbol == "" || stockSymbol == null)) {
     		if(!((dateStr == "" || dateStr == null ) || (dateEnd == "" || dateEnd == null ))) {
