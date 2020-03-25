@@ -11,14 +11,14 @@ public class StockServiceFactoryTest {
 	@Test
 	public void stockServiceFactoryTestSym() {
 		StockService testStock = StockServiceFactory.getStockService();
-		assertEquals(testStock.getQuote("TSLA").getTickerSymbol(), "TSLA");
+		assertEquals(testStock.getQuote("GOOG").getTickerSymbol(), "GOOG");
 		
 	}
 	
 	@Test
 	public void stockServiceFactoryTestVal() {
 		StockService testStock = StockServiceFactory.getStockService();
-		assertTrue(testStock.getQuote("TSLA").getValue() == 780.08);
+		assertTrue(testStock.getQuote("GOOG").getValue() == 85.0);
 		
 	}
 	

@@ -9,6 +9,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 enum IntervalEnum {
 	MINUTE, HOUR, DAY, MONTH;
@@ -136,5 +141,47 @@ public class DatabaseStockService implements StockService {
     	
     	
         return stockQuotes;
+    }
+
+
+    @Override
+    public void addOrUpdatePerson(Person person) {
+        Session session = DatabaseUtils.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            session.saveOrUpdate(person);
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();  // close transaction
+            }
+        } finally {
+            if (transaction != null && transaction.isActive()) {
+                transaction.commit();
+            }
+        }
+    }
+    
+    @Override
+    public void addQuoteToPerson(StockQuote quote, Person person) {
+        Session session =  DatabaseUtils.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            PersonQuote personQuote = new PersonQuote();
+            personQuote.setQuote(quote);
+            personQuote.setPerson(person);
+            session.saveOrUpdate(personQuote);
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();  // close transaction
+            }
+        } finally {
+            if (transaction != null && transaction.isActive()) {
+                transaction.commit();
+            }
+        }
     }
 }

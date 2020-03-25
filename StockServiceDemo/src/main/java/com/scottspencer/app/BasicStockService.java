@@ -44,6 +44,16 @@ import org.apache.http.annotation.Immutable;
 		return stockHistory;
 	}
 
+	@Override
+	public void addOrUpdatePerson(Person person) throws StockServiceException {
+		
+	}
+
+	@Override
+	public void addQuoteToPerson(StockQuote quote, Person person) {
+		
+	}
+
 }
 
 
