@@ -1,4 +1,4 @@
-package com.scottspencer.app;
+package com.scottspencer.util;
 
 public class DatabaseConnectionException extends Exception {
 

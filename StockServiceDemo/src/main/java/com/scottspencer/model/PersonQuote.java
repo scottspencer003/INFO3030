@@ -1,4 +1,4 @@
-package com.scottspencer.app;
+package com.scottspencer.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

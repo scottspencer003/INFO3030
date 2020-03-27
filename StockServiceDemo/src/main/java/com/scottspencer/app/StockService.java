@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.apache.http.annotation.Immutable;
 
+import com.scottspencer.model.Person;
+import com.scottspencer.model.StockQuote;
+import com.scottspencer.service.StockServiceException;
+
 @Immutable public interface StockService {
 	
 	StockQuote getQuote(String symbol) throws StockServiceException;

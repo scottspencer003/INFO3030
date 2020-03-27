@@ -1,4 +1,4 @@
-package com.scottspencer.app;
+package com.scottspencer.service;
 
 public class StockServiceException extends Exception {
 

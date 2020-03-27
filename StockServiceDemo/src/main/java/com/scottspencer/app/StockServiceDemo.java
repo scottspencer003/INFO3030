@@ -7,11 +7,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
+
+import com.scottspencer.model.StockQuote;
+import com.scottspencer.service.StockServiceException;
+import com.scottspencer.service.StockServiceFactory;
+
 import java.util.Iterator;
 
 public class StockServiceDemo 
 {
     public static void main( String[] args ) throws ParseException, StockServiceException {
+    	
     	String stockSymbol;
     	String dateStr; 
     	String dateEnd;
@@ -89,7 +95,9 @@ public class StockServiceDemo
     		System.out.println("A stock symbol must be provided");
     	}
     	
+    	
     }
+    
 }
 
 

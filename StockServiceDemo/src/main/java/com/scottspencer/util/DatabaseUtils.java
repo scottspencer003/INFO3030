@@ -1,5 +1,6 @@
-package com.scottspencer.app;
+package com.scottspencer.util;
 import com.ibatis.common.jdbc.ScriptRunner;
+import com.scottspencer.app.DatabaseStockService;
 
 import java.io.FileInputStream;
 import java.io.IOException;

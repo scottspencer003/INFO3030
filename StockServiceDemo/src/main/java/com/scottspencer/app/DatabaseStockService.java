@@ -15,6 +15,13 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
+import com.scottspencer.model.Person;
+import com.scottspencer.model.PersonQuote;
+import com.scottspencer.model.StockQuote;
+import com.scottspencer.service.StockServiceException;
+import com.scottspencer.util.DatabaseConnectionException;
+import com.scottspencer.util.DatabaseUtils;
+
 enum IntervalEnum {
 	MINUTE, HOUR, DAY, MONTH;
 }

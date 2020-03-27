@@ -9,6 +9,10 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.http.annotation.Immutable;
 
+import com.scottspencer.model.Person;
+import com.scottspencer.model.StockQuote;
+import com.scottspencer.service.StockServiceException;
+
 
 
 @Immutable public class BasicStockService implements StockService {

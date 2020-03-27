@@ -1,8 +1,10 @@
-package com.scottspencer.app;
+package com.scottspencer.service;
 
 import java.util.List;
 
 import org.apache.http.annotation.Immutable;
+
+import com.scottspencer.model.Person;
 
 @Immutable public interface UserStockService {
 	
