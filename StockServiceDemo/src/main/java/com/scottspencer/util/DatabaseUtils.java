@@ -1,6 +1,12 @@
 package com.scottspencer.util;
-import com.ibatis.common.jdbc.ScriptRunner;
+
+
 import com.scottspencer.app.DatabaseStockService;
+import com.ibatis.common.jdbc.ScriptRunner;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,13 +16,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.ibatis.common.jdbc.ScriptRunner;
-//import com.origamisoftware.teach.advanced.service.DatabaseActivitiesService;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
-
 /**
  * A class that contains database related utility methods.
  */
@@ -24,26 +23,20 @@ public class DatabaseUtils {
 
     // in a real program these values would be a configurable property and not hard coded.
     // JDBC driver name and database URL
-    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/stocks?serverTimezone=UTC";
+    @SuppressWarnings("unused")
+	private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+    //private static final String DB_URL = "jdbc:mysql://localhost:3306/stocks?serverTimezone=UTC";
+    
+    public static final String initializationFile = "./src/main/sql/db_initialization.sql";
     
     private static SessionFactory sessionFactory;
     private static Configuration configuration;
 
     //  Database credentials
-    private static final String USER = "monty";
-    private static final String PASS = "some_pass";
-
-    public static Connection getConnection() throws DatabaseConnectionException{
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection =   DriverManager.getConnection(DB_URL, USER, PASS);
-        } catch (ClassNotFoundException  | SQLException e)  {
-           throw new  DatabaseConnectionException("Could not connection to database." + e.getMessage(), e);
-        }
-        return connection;
-    }
+//    private static final String USER = "monty";
+//    private static final String PASS = "some_pass";
+    
+        
 
     /**
      * A utility method that runs a db initialize script.
@@ -55,10 +48,11 @@ public class DatabaseUtils {
         Connection connection = null;
         try {
             connection = getConnection();
+            connection.setAutoCommit(false);
             ScriptRunner runner = new ScriptRunner(connection, false, false);
             InputStream inputStream = new  FileInputStream(initializationScript);
 
-            InputStreamReader reader = new InputStreamReader(inputStream);
+            InputStreamReader reader = new InputStreamReader(inputStream);  
 
             runner.runScript(reader);
             reader.close();
@@ -99,7 +93,7 @@ public class DatabaseUtils {
      *
      * @return a Hibernate Configuration instance.
      */
-    private static Configuration getConfiguration() {
+    public static Configuration getConfiguration() {
 
         synchronized (DatabaseUtils.class) {
             if (configuration == null) {
@@ -108,5 +102,20 @@ public class DatabaseUtils {
             }
         }
         return configuration;
+    }
+    
+    public static Connection getConnection() throws DatabaseConnectionException{
+        Connection connection = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String databaseUrl = configuration.getProperty("connection.url");
+            String username = configuration.getProperty("hibernate.connection.username");
+            String password = configuration.getProperty("hibernate.connection.password");
+            connection = DriverManager.getConnection(databaseUrl, username, password);
+            
+        } catch (ClassNotFoundException  | SQLException e)  {
+           throw new  DatabaseConnectionException("Could not connection to database." + e.getMessage(), e);
+        }
+        return connection;
     }
 }

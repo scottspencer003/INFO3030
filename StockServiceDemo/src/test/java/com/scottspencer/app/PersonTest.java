@@ -1,11 +1,8 @@
 package com.scottspencer.app;
 
-import static org.junit.Assert.*;
 
 import org.junit.Test;
-
 import com.scottspencer.model.Person;
-
 import static org.junit.Assert.assertEquals;
 
 

@@ -8,16 +8,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-
 import com.scottspencer.model.Person;
 import com.scottspencer.model.PersonQuote;
-import com.scottspencer.model.StockQuote;
+import com.scottspencer.model.StockQuoteDao;
 import com.scottspencer.service.StockServiceException;
 import com.scottspencer.util.DatabaseConnectionException;
 import com.scottspencer.util.DatabaseUtils;
@@ -43,31 +43,32 @@ public class DatabaseStockService implements StockService {
      *                               error.
      */
     @Override
-    public StockQuote getQuote(String symbol) throws StockServiceException {
-        // todo - this is a pretty lame implementation why?
-        List<StockQuote> stockQuotes = new ArrayList<>();
+    @SuppressWarnings("unchecked")
+    public StockQuoteDao getQuote(String symbol) throws StockServiceException {
+    	
+        Session session = DatabaseUtils.getSessionFactory().openSession();
+        List<StockQuoteDao> stockQuotes = new ArrayList<>();
+        Transaction transaction = null;
         try {
-            Connection connection = DatabaseUtils.getConnection();
-            Statement statement = connection.createStatement();
-            String queryString = "select * from quotes where symbol = '" + symbol + "'";
+            transaction = session.beginTransaction();
+            Criteria criteria = session.createCriteria(StockQuoteDao.class);
+            
+            //Return stocks based on criteria somehow?
+            criteria.add(Restrictions.eq("symbol", symbol));
 
-            ResultSet resultSet = statement.executeQuery(queryString);
-            stockQuotes = new ArrayList<>(resultSet.getFetchSize());
-            while(resultSet.next()) {
-                String symbolValue = resultSet.getString("symbol");
-                Date time = resultSet.getDate("time");
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(time);
-                double price = resultSet.getDouble("price");
-                stockQuotes.add(new StockQuote(price, symbolValue, calendar));
+            stockQuotes = criteria.list(); 
+           
+        } catch (HibernateException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();  // close transaction
             }
-
-        } catch (DatabaseConnectionException | SQLException exception) {
-            throw new StockServiceException(exception.getMessage(), exception);
+            throw new StockServiceException("Could not get stock data. " + e.getMessage(), e);
+        } finally {
+            if (transaction != null && transaction.isActive()) {
+                transaction.commit();
+            }
         }
-        if (stockQuotes.isEmpty()) {
-            throw new StockServiceException("There is no stock data for:" + symbol);
-        }
+        
         return stockQuotes.get(0);
     }
 
@@ -81,73 +82,141 @@ public class DatabaseStockService implements StockService {
      * @return a list of StockQuote instances
      * @throws StockServiceException 
      */
-    @Override
-    public List<StockQuote> getQuote(String symbol, Calendar from, Calendar until, IntervalEnum interval) throws StockServiceException {
-    	List <StockQuote> stockQuotes = new ArrayList<>();
-    	try {
-    		Connection connection = DatabaseUtils.getConnection();
-            Statement statement = connection.createStatement();
-            Date startDate = new Date(from.getTimeInMillis()); 
-            Date endDate = new Date(until.getTimeInMillis());
-            String queryString = "SELECT * FROM quotes WHERE symbol = '" + symbol + "' AND time BETWEEN CAST('" + startDate + "' AS DATE) AND CAST('" + endDate + "' AS DATE)";
+    @SuppressWarnings("unchecked")
+	@Override
+    public List<StockQuoteDao> getQuote(String symbol, Calendar from, Calendar until, IntervalEnum interval) throws StockServiceException {
 
-            ResultSet resultSet = statement.executeQuery(queryString);
-            stockQuotes = new ArrayList<>(resultSet.getFetchSize());
-                       
-            Calendar checkCal = Calendar.getInstance();
+        Session session = DatabaseUtils.getSessionFactory().openSession();
+        List <StockQuoteDao> stockQuotes = null;
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            Criteria criteria = session.createCriteria(StockQuoteDao.class);
+            criteria.add(Restrictions.eq("symbol", symbol)).add(Restrictions.between("time", from, until));
+            stockQuotes = criteria.list();
             
-            while(resultSet.next()) {
-    
-                String symbolValue = resultSet.getString("symbol");
-                Date time = resultSet.getDate("time");
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(time);
-                double price = resultSet.getDouble("price");
+            //Calendar checkCal = Calendar.getInstance();
+            
+//            while(resultSet.iterator().hasNext()) {
+//              
+//            String symbolValue = resultSet.iterator().next().getTickerSymbol();
+//            Calendar time = resultSet.iterator().next().getDate();
+//            Calendar calendar = Calendar.getInstance();
+//            checkCal.setTime(time); 
+//            double price = resultSet.iterator().next().getValue();
+//
+//         switch(interval) {
+//          case MINUTE:
+//          	if(calendar.after(checkCal)) 
+//              	stockQuotes.add(new StockQuoteDao(price, symbolValue, calendar));
+//              	checkCal.setTime(time); 
+//              	checkCal.add(checkCal.MINUTE, 1);
+//          	break;
+//          	
+//          case HOUR:	
+//          	if(calendar.after(checkCal)) 
+//              	stockQuotes.add(new StockQuoteDao(price, symbolValue, calendar));
+//              	checkCal.setTime(time);
+//              	checkCal.add(checkCal.HOUR, 1);
+//          	break;
+//          	
+//          case DAY:  
+//          	if(calendar.after(checkCal)) 
+//              	stockQuotes.add(new StockQuoteDao(price, symbolValue, calendar));
+//              	checkCal.setTime(time);
+//              	checkCal.add(checkCal.DAY_OF_YEAR, 1);
+//          	break;
+//       
+//          case MONTH:
+//          	if(calendar.after(checkCal)) 
+//              	stockQuotes.add(new StockQuoteDao(price, symbolValue, calendar));
+//              	checkCal.setTime(time);
+//              	checkCal.add(checkCal.MONTH, 1);
+//          	break;
+//          	
+//          }
+//        }
 
-                switch(interval) {
-                case MINUTE:
-                	if(calendar.after(checkCal)) 
-	                	stockQuotes.add(new StockQuote(price, symbolValue, calendar));
-	                	checkCal.setTime(time);
-	                	checkCal.add(checkCal.MINUTE, 1);
-                	break;
-                	
-                case HOUR:	
-                	if(calendar.after(checkCal)) 
-	                	stockQuotes.add(new StockQuote(price, symbolValue, calendar));
-	                	checkCal.setTime(time);
-	                	checkCal.add(checkCal.HOUR, 1);
-                	break;
-                	
-                case DAY:  
-                	if(calendar.after(checkCal)) 
-	                	stockQuotes.add(new StockQuote(price, symbolValue, calendar));
-	                	checkCal.setTime(time);
-	                	checkCal.add(checkCal.DAY_OF_YEAR, 1);
-                	break;
-             
-                case MONTH:
-                	if(calendar.after(checkCal)) 
-	                	stockQuotes.add(new StockQuote(price, symbolValue, calendar));
-	                	checkCal.setTime(time);
-	                	checkCal.add(checkCal.MONTH, 1);
-                	break;
-                	
-                }
 
-                
-                
+        } catch (HibernateException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();  // close transaction
             }
-                  
-    	} catch (DatabaseConnectionException | SQLException exception) {
-            throw new StockServiceException(exception.getMessage(), exception);
+            throw new StockServiceException("Could not get historical stock data. " + e.getMessage(), e);
+        } finally {
+            if (transaction != null && transaction.isActive()) {
+                transaction.commit();
+            }
         }
-        if (stockQuotes.isEmpty()) {
-            throw new StockServiceException("There is no stock data for:" + symbol);
-        }
-    	
-    	
+
         return stockQuotes;
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Person> getPerson() throws StockServiceException{
+        Session session = DatabaseUtils.getSessionFactory().openSession();
+        List<Person> returnValue = null;
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            Criteria criteria = session.createCriteria(Person.class);
+
+            /**
+             * NOTE criteria.list(); generates unchecked warning so SuppressWarnings
+             * is used - HOWEVER, this about the only @SuppressWarnings I think it is OK
+             * to suppress them - in almost all other cases they should be fixed not suppressed
+             */
+            returnValue = criteria.list();
+
+        } catch (HibernateException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();  // close transaction
+            }
+            throw new StockServiceException("Could not get Person data. " + e.getMessage(), e);
+        } finally {
+            if (transaction != null && transaction.isActive()) {
+                transaction.commit();
+            }
+        }
+
+        return returnValue;
+
+    }
+    
+    
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<StockQuoteDao> getPersonStocks(Person person) {
+        Session session =  DatabaseUtils.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<StockQuoteDao> stockQuotes = new ArrayList<>();
+        try {
+            transaction = session.beginTransaction();
+            Criteria criteria = session.createCriteria(PersonQuote.class);
+            criteria.add(Restrictions.eq("person", person));
+            /**
+             * NOTE criteria.list(); generates unchecked warning so SuppressWarnings
+             * is used - HOWEVER, this about the only @SuppressWarnings I think it is OK
+             * to suppress them - in almost all other cases they should be fixed not suppressed
+             */
+            List<PersonQuote> list = criteria.list();
+            for (PersonQuote personQuote : list) {
+            	stockQuotes.add(personQuote.getQuote());
+            }
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();  // close transaction
+            }
+        } finally {
+            if (transaction != null && transaction.isActive()) {
+                transaction.commit();
+            }
+        }
+        return stockQuotes;
+
     }
 
 
@@ -170,8 +239,36 @@ public class DatabaseStockService implements StockService {
         }
     }
     
+    public Person getSpecificPerson(String firstName, String lastName) throws StockServiceException {
+    	
+        Session session = DatabaseUtils.getSessionFactory().openSession();
+        List<Person> person = new ArrayList<>();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            Criteria criteria = session.createCriteria(Person.class);
+            
+            //Return stocks based on criteria somehow?
+            criteria.add(Restrictions.eq("firstName", firstName)).add(Restrictions.eq("lastName", lastName));
+
+            person = criteria.list(); 
+            
+        } catch (HibernateException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();  // close transaction
+            }
+            throw new StockServiceException("Could not get stock data. " + e.getMessage(), e);
+        } finally {
+            if (transaction != null && transaction.isActive()) {
+                transaction.commit();
+            }
+        }
+        
+        return person.get(0);
+    }
+    
     @Override
-    public void addQuoteToPerson(StockQuote quote, Person person) {
+    public void addQuoteToPerson(StockQuoteDao quote, Person person) {
         Session session =  DatabaseUtils.getSessionFactory().openSession();
         Transaction transaction = null;
         try {

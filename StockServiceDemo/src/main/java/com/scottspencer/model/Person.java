@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 /**
  * Models the Person table
  */
@@ -13,9 +13,16 @@ import java.sql.Timestamp;
 @Table(name="person")
 public class Person {
 	
-
+    @Id
+    @Column(name = "ID", nullable = false, insertable = true, updatable = true)
     private int id;
+    
+    @Basic
+    @Column(name = "first_name", nullable = false, insertable = true, updatable = true, length = 256)
     private String firstName;
+    
+    @Basic
+    @Column(name = "last_name", nullable = false, insertable = true, updatable = true, length = 256)
     private String lastName;
     
 
@@ -24,11 +31,11 @@ public class Person {
      *
      * @return an integer value
      */
-    @Id
-    @Column(name = "ID", nullable = false, insertable = true, updatable = true)
+
     public int getId() {
         return id;
     }
+      
 
     /**
      * Set the unique ID for a particular row in the person table.
@@ -44,8 +51,7 @@ public class Person {
      *
      * @return the person's first name
      */
-    @Basic
-    @Column(name = "first_name", nullable = false, insertable = true, updatable = true, length = 256)
+
     public String getFirstName() {
         return firstName;
     }
@@ -62,8 +68,7 @@ public class Person {
      *
      * @return the person's last name
      */
-    @Basic
-    @Column(name = "last_name", nullable = false, insertable = true, updatable = true, length = 256)
+
     public String getLastName() {
         return lastName;
     }

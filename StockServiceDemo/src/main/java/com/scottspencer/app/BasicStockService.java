@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.http.annotation.Immutable;
 
 import com.scottspencer.model.Person;
-import com.scottspencer.model.StockQuote;
+import com.scottspencer.model.StockQuoteDao;
 import com.scottspencer.service.StockServiceException;
 
 
@@ -20,18 +20,19 @@ import com.scottspencer.service.StockServiceException;
 	public BasicStockService() {
 	}
 	
-	public StockQuote getQuote(String tickerSymbol) {
-		return new StockQuote(780.08, "TSLA");
+	
+	public StockQuoteDao getQuote(String tickerSymbol) {
+		return new StockQuoteDao(780.08, "TSLA");
 	}
 
 
-	public List<StockQuote> getQuote(@NotNull String symbol, Calendar from, Calendar until, IntervalEnum interval) {
+	public List<StockQuoteDao> getQuote(@NotNull String symbol, Calendar from, Calendar until, IntervalEnum interval) {
 
 		return createObjects();
 	}
 	
-	private List<StockQuote> createObjects() {
-		List<StockQuote> stockHistory = new ArrayList<>();
+	private List<StockQuoteDao> createObjects() {
+		List<StockQuoteDao> stockHistory = new ArrayList<>();
 		
 		int year = 2020;
 		int month = 0;
@@ -40,7 +41,7 @@ import com.scottspencer.service.StockServiceException;
 		
 		for(int i = 0; i < 12; i++) {
 			Calendar date = new GregorianCalendar(year, month, day);
-			stockHistory.add(new StockQuote(price, "TSLA", date));
+			stockHistory.add(new StockQuoteDao(price, "TSLA", date));
 			month++;
 			price = price + 50/1 + 2;
 			
@@ -54,7 +55,7 @@ import com.scottspencer.service.StockServiceException;
 	}
 
 	@Override
-	public void addQuoteToPerson(StockQuote quote, Person person) {
+	public void addQuoteToPerson(StockQuoteDao quote, Person person) {
 		
 	}
 

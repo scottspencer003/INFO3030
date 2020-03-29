@@ -8,18 +8,20 @@
         <!-- This file contains installation specific properties used by the -->
         <!-- HibernateUtils class.  Applications should place this file in  -->
         <!-- the root of their class path with appropriate production values. -->
+        
+        
 
         <!-- Tug database connection URL and credentials -->
-        <property name="connection.url">jdbc:mysql://localhost:3306/stocks</property>
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/stocks?serverTimezone=UTC</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
 
         <property name="hibernate.connection.username">monty</property>
         <property name="hibernate.connection.password">some_pass</property>
 
-		<mapping class="com.scottspencer.app.Person"/>
-		<mapping class="com.scottspencer.app.StockQuote"/>
-		<mapping class="com.scottspencer.app.PersonQuote"/>
+		<mapping class="com.scottspencer.model.Person"/>
+		<mapping class="com.scottspencer.model.StockQuoteDao"/>
+		<mapping class="com.scottspencer.model.PersonQuote"/>
 
 
     </session-factory>
